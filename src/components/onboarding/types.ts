@@ -1,4 +1,3 @@
-
 export interface BusinessInfo {
   businessName: string;
   businessType: string;
@@ -43,6 +42,11 @@ export interface Legal {
   privacyPolicy: File | null;
   hipaaCompliance: File | null;
   useTemplates: boolean;
+  templateContent?: {
+    termsConditions: string;
+    privacyPolicy: string;
+    hipaaCompliance: string;
+  };
 }
 
 export interface Payment {

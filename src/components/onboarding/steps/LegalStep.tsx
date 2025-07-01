@@ -1,10 +1,11 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ChevronLeft, Upload, FileText, Shield, Scale } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { ChevronLeft, Upload, FileText, Shield, Scale, Edit, Save, X } from 'lucide-react';
 import { Legal } from '../types';
 
 interface LegalStepProps {
@@ -13,6 +14,92 @@ interface LegalStepProps {
   onNext: () => void;
   onPrev: () => void;
 }
+
+const defaultTemplates = {
+  termsConditions: `TERMS AND CONDITIONS
+
+Last updated: [DATE]
+
+1. ACCEPTANCE OF TERMS
+By accessing and using this telehealth platform, you accept and agree to be bound by the terms and provision of this agreement.
+
+2. MEDICAL SERVICES
+This platform provides telehealth consultation services. All medical advice should be confirmed with your healthcare provider.
+
+3. PRIVACY AND CONFIDENTIALITY
+We are committed to protecting your privacy and maintaining the confidentiality of your health information in accordance with HIPAA regulations.
+
+4. USER RESPONSIBILITIES
+You agree to provide accurate and complete information during consultations and follow all prescribed treatments.
+
+5. LIMITATION OF LIABILITY
+The platform and its providers shall not be liable for any indirect, incidental, or consequential damages.
+
+6. TERMINATION
+We reserve the right to terminate access to the platform for violation of these terms.
+
+For questions about these terms, please contact us at [CONTACT_EMAIL].`,
+
+  privacyPolicy: `PRIVACY POLICY
+
+Last updated: [DATE]
+
+1. INFORMATION WE COLLECT
+We collect information you provide directly to us, such as when you create an account, schedule appointments, or communicate with healthcare providers.
+
+2. HOW WE USE YOUR INFORMATION
+- To provide telehealth services
+- To communicate with you about appointments
+- To improve our platform and services
+- To comply with legal obligations
+
+3. INFORMATION SHARING
+We do not sell, trade, or rent your personal information. We may share information with:
+- Healthcare providers for treatment purposes
+- Service providers who assist in platform operations
+- As required by law or legal process
+
+4. DATA SECURITY
+We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
+
+5. YOUR RIGHTS
+You have the right to access, update, or delete your personal information. Contact us at [CONTACT_EMAIL] to exercise these rights.
+
+6. HIPAA COMPLIANCE
+This platform complies with the Health Insurance Portability and Accountability Act (HIPAA) and protects your health information accordingly.
+
+Contact us at [CONTACT_EMAIL] for privacy-related questions.`,
+
+  hipaaCompliance: `HIPAA COMPLIANCE NOTICE
+
+This Notice describes how medical information about you may be used and disclosed and how you can get access to this information.
+
+PROTECTED HEALTH INFORMATION (PHI)
+We are required by law to maintain the privacy of your health information and to provide you with notice of our legal duties and privacy practices.
+
+USES AND DISCLOSURES
+We may use and disclose your PHI for:
+- Treatment purposes
+- Payment activities
+- Healthcare operations
+- As required by law
+
+YOUR RIGHTS
+You have the right to:
+- Request restrictions on uses and disclosures
+- Request to receive communications in a certain manner
+- Inspect and copy your PHI
+- Request amendments to your PHI
+- Receive an accounting of disclosures
+
+COMPLAINTS
+If you believe your privacy rights have been violated, you may file a complaint with us at [CONTACT_EMAIL] or with the U.S. Department of Health and Human Services.
+
+CHANGES TO THIS NOTICE
+We reserve the right to change this notice and make the new notice apply to PHI we already have as well as any PHI we receive in the future.
+
+For questions about this notice, contact us at [CONTACT_EMAIL].`
+};
 
 export const LegalStep: React.FC<LegalStepProps> = ({
   data,
@@ -23,9 +110,31 @@ export const LegalStep: React.FC<LegalStepProps> = ({
   const termsRef = useRef<HTMLInputElement>(null);
   const privacyRef = useRef<HTMLInputElement>(null);
   const hipaaRef = useRef<HTMLInputElement>(null);
+  
+  const [editingTemplates, setEditingTemplates] = useState(false);
+  const [templateContent, setTemplateContent] = useState({
+    termsConditions: data.templateContent?.termsConditions || defaultTemplates.termsConditions,
+    privacyPolicy: data.templateContent?.privacyPolicy || defaultTemplates.privacyPolicy,
+    hipaaCompliance: data.templateContent?.hipaaCompliance || defaultTemplates.hipaaCompliance,
+  });
 
   const handleFileUpload = (type: 'termsConditions' | 'privacyPolicy' | 'hipaaCompliance', file: File) => {
     onUpdate({ ...data, [type]: file });
+  };
+
+  const handleSaveTemplates = () => {
+    onUpdate({ 
+      ...data, 
+      templateContent: templateContent 
+    });
+    setEditingTemplates(false);
+  };
+
+  const handleTemplateChange = (type: keyof typeof templateContent, content: string) => {
+    setTemplateContent(prev => ({
+      ...prev,
+      [type]: content
+    }));
   };
 
   const FileUploadCard = ({ 
@@ -115,34 +224,120 @@ export const LegalStep: React.FC<LegalStepProps> = ({
       </Card>
 
       {data.useTemplates ? (
-        <Card className="p-6 shadow-lg border-0 bg-green-50/50 backdrop-blur-sm border-green-200">
-          <div className="text-center">
-            <div className="p-3 bg-green-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-              <Shield className="h-8 w-8 text-green-600" />
+        <div className="space-y-6">
+          <Card className="p-6 shadow-lg border-0 bg-green-50/50 backdrop-blur-sm border-green-200">
+            <div className="text-center">
+              <div className="p-3 bg-green-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <Shield className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-green-900 mb-2">Templates Selected</h3>
+              <p className="text-green-700 mb-4">
+                We'll automatically include our compliant legal templates for your platform:
+              </p>
+              <div className="space-y-2 text-left max-w-md mx-auto">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-green-800">HIPAA-compliant Terms & Conditions</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-green-800">Healthcare Privacy Policy</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-green-800">HIPAA Compliance Notice</span>
+                </div>
+              </div>
+              <p className="text-xs text-green-600 mt-4 mb-4">
+                These templates are regularly updated to maintain compliance with current regulations.
+              </p>
+              
+              <Button
+                onClick={() => setEditingTemplates(true)}
+                variant="outline"
+                className="mt-4"
+              >
+                <Edit size={16} className="mr-2" />
+                Edit Templates
+              </Button>
             </div>
-            <h3 className="text-xl font-semibold text-green-900 mb-2">Templates Selected</h3>
-            <p className="text-green-700 mb-4">
-              We'll automatically include our compliant legal templates for your platform:
-            </p>
-            <div className="space-y-2 text-left max-w-md mx-auto">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-green-800">HIPAA-compliant Terms & Conditions</span>
+          </Card>
+
+          {editingTemplates && (
+            <Card className="p-6 shadow-lg border-0 bg-white">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-slate-800">Edit Template Documents</h3>
+                <Button
+                  onClick={() => setEditingTemplates(false)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  <X size={16} />
+                </Button>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-green-800">Healthcare Privacy Policy</span>
+              
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="terms-template" className="text-base font-medium text-slate-700 mb-2 block">
+                    Terms & Conditions Template
+                  </Label>
+                  <Textarea
+                    id="terms-template"
+                    value={templateContent.termsConditions}
+                    onChange={(e) => handleTemplateChange('termsConditions', e.target.value)}
+                    rows={8}
+                    className="font-mono text-sm"
+                    placeholder="Enter your terms and conditions..."
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="privacy-template" className="text-base font-medium text-slate-700 mb-2 block">
+                    Privacy Policy Template
+                  </Label>
+                  <Textarea
+                    id="privacy-template"
+                    value={templateContent.privacyPolicy}
+                    onChange={(e) => handleTemplateChange('privacyPolicy', e.target.value)}
+                    rows={8}
+                    className="font-mono text-sm"
+                    placeholder="Enter your privacy policy..."
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="hipaa-template" className="text-base font-medium text-slate-700 mb-2 block">
+                    HIPAA Compliance Notice Template
+                  </Label>
+                  <Textarea
+                    id="hipaa-template"
+                    value={templateContent.hipaaCompliance}
+                    onChange={(e) => handleTemplateChange('hipaaCompliance', e.target.value)}
+                    rows={8}
+                    className="font-mono text-sm"
+                    placeholder="Enter your HIPAA compliance notice..."
+                  />
+                </div>
+                
+                <div className="flex justify-end space-x-3">
+                  <Button
+                    onClick={() => setEditingTemplates(false)}
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSaveTemplates}
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    <Save size={16} className="mr-2" />
+                    Save Templates
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-green-800">HIPAA Compliance Notice</span>
-              </div>
-            </div>
-            <p className="text-xs text-green-600 mt-4">
-              These templates are regularly updated to maintain compliance with current regulations.
-            </p>
-          </div>
-        </Card>
+            </Card>
+          )}
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FileUploadCard
