@@ -61,10 +61,12 @@ export const OnboardingWizard = () => {
       privacyPolicy: null,
       hipaaCompliance: null,
       useTemplates: true,
+      additionalDocuments: [],
     },
     payment: {
       completed: false,
       transactionId: '',
+      acceptedTerms: false,
     },
   });
 

@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronLeft, Upload, FileText, Shield, Scale, Edit, Save, X } from 'lucide-react';
-import { Legal } from '../types';
+import { Input } from '@/components/ui/input';
+import { ChevronLeft, Upload, FileText, Shield, Scale, Edit, Save, X, Trash2, Plus } from 'lucide-react';
+import { Legal, AdditionalDocument } from '../types';
 
 interface LegalStepProps {
   data: Legal;
@@ -110,8 +111,11 @@ export const LegalStep: React.FC<LegalStepProps> = ({
   const termsRef = useRef<HTMLInputElement>(null);
   const privacyRef = useRef<HTMLInputElement>(null);
   const hipaaRef = useRef<HTMLInputElement>(null);
+  const additionalDocRef = useRef<HTMLInputElement>(null);
   
   const [editingTemplates, setEditingTemplates] = useState(false);
+  const [newDocTitle, setNewDocTitle] = useState('');
+  const [showAdditionalDocs, setShowAdditionalDocs] = useState(false);
   const [templateContent, setTemplateContent] = useState({
     termsConditions: data.templateContent?.termsConditions || defaultTemplates.termsConditions,
     privacyPolicy: data.templateContent?.privacyPolicy || defaultTemplates.privacyPolicy,
@@ -135,6 +139,30 @@ export const LegalStep: React.FC<LegalStepProps> = ({
       ...prev,
       [type]: content
     }));
+  };
+
+  const handleAdditionalDocUpload = (file: File) => {
+    if (!newDocTitle.trim()) return;
+    
+    const newDoc: AdditionalDocument = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: newDocTitle,
+      file: file
+    };
+    
+    onUpdate({
+      ...data,
+      additionalDocuments: [...data.additionalDocuments, newDoc]
+    });
+    
+    setNewDocTitle('');
+  };
+
+  const handleDeleteAdditionalDoc = (docId: string) => {
+    onUpdate({
+      ...data,
+      additionalDocuments: data.additionalDocuments.filter(doc => doc.id !== docId)
+    });
   };
 
   const FileUploadCard = ({ 
@@ -368,6 +396,94 @@ export const LegalStep: React.FC<LegalStepProps> = ({
           />
         </div>
       )}
+
+      {/* Additional Documents Section */}
+      <Card className="p-6 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-slate-100 rounded-lg">
+              <Plus className="h-6 w-6 text-slate-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-slate-800">Upload Additional Documents (Optional)</h3>
+              <p className="text-sm text-slate-600">
+                If you have other compliance or legal documents you'd like to include, upload them here.
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAdditionalDocs(!showAdditionalDocs)}
+          >
+            {showAdditionalDocs ? 'Hide' : 'Show'}
+          </Button>
+        </div>
+
+        {showAdditionalDocs && (
+          <div className="space-y-4">
+            {/* Upload New Document */}
+            <div className="p-4 border-2 border-dashed border-slate-300 rounded-lg">
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="docTitle" className="text-sm font-medium text-slate-700">
+                    Document Title
+                  </Label>
+                  <Input
+                    id="docTitle"
+                    placeholder="e.g., Consent Form, Additional Policy"
+                    value={newDocTitle}
+                    onChange={(e) => setNewDocTitle(e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => additionalDocRef.current?.click()}
+                  disabled={!newDocTitle.trim()}
+                  className="w-full"
+                >
+                  <Upload size={16} className="mr-2" />
+                  Upload Document
+                </Button>
+                <input
+                  ref={additionalDocRef}
+                  type="file"
+                  accept=".pdf,.doc,.docx"
+                  onChange={(e) => e.target.files?.[0] && handleAdditionalDocUpload(e.target.files[0])}
+                  className="hidden"
+                />
+              </div>
+            </div>
+
+            {/* Uploaded Documents List */}
+            {data.additionalDocuments.length > 0 && (
+              <div className="space-y-3">
+                <h4 className="font-medium text-slate-800">Uploaded Documents</h4>
+                {data.additionalDocuments.map((doc) => (
+                  <div key={doc.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center space-x-3">
+                      <FileText size={20} className="text-green-600" />
+                      <div>
+                        <div className="font-medium text-green-900">{doc.title}</div>
+                        <div className="text-sm text-green-700">{doc.file.name}</div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteAdditionalDoc(doc.id)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </Card>
 
       <Card className="p-4 bg-blue-50 border-blue-200">
         <div className="flex items-start space-x-3">

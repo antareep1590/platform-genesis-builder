@@ -37,11 +37,18 @@ export interface Domain {
   domainOption: 'subdomain' | 'custom' | 'purchase';
 }
 
+export interface AdditionalDocument {
+  id: string;
+  title: string;
+  file: File;
+}
+
 export interface Legal {
   termsConditions: File | null;
   privacyPolicy: File | null;
   hipaaCompliance: File | null;
   useTemplates: boolean;
+  additionalDocuments: AdditionalDocument[];
   templateContent?: {
     termsConditions: string;
     privacyPolicy: string;
@@ -52,6 +59,7 @@ export interface Legal {
 export interface Payment {
   completed: boolean;
   transactionId: string;
+  acceptedTerms: boolean;
 }
 
 export interface OnboardingData {
