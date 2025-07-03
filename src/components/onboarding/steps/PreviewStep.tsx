@@ -3,19 +3,21 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronLeft, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { ChevronLeft, Monitor, Smartphone, Tablet, Edit3, Palette, Type, Globe } from 'lucide-react';
 import { OnboardingData } from '../types';
 
 interface PreviewStepProps {
   onboardingData: OnboardingData;
   onNext: () => void;
   onPrev: () => void;
+  onGoToStep: (stepNumber: number) => void;
 }
 
 export const PreviewStep: React.FC<PreviewStepProps> = ({
   onboardingData,
   onNext,
-  onPrev
+  onPrev,
+  onGoToStep
 }) => {
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
@@ -214,6 +216,46 @@ export const PreviewStep: React.FC<PreviewStepProps> = ({
       </div>
 
       <Card className="p-6 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+        {/* Quick Edit Actions */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 p-4 bg-slate-50 rounded-lg">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onGoToStep(1)}
+            className="flex items-center space-x-2"
+          >
+            <Edit3 size={14} />
+            <span>Edit Business Info</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onGoToStep(2)}
+            className="flex items-center space-x-2"
+          >
+            <Type size={14} />
+            <span>Change Template</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onGoToStep(3)}
+            className="flex items-center space-x-2"
+          >
+            <Palette size={14} />
+            <span>Edit Branding</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onGoToStep(6)}
+            className="flex items-center space-x-2"
+          >
+            <Globe size={14} />
+            <span>Change Domain</span>
+          </Button>
+        </div>
+
         <div className="flex items-center justify-between mb-6">
           <Tabs defaultValue="landing" className="flex-1">
             <TabsList className="grid w-full grid-cols-4">

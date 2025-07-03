@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, Globe, Search, ExternalLink, Copy, Check, HelpCircle, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, Globe, Search, ExternalLink, Copy, Check, HelpCircle, AlertCircle, CheckCircle2, Shield, Zap, Settings } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { Domain } from '../types';
 
@@ -30,6 +30,8 @@ export const DomainStep: React.FC<DomainStepProps> = ({
   const [copied, setCopied] = useState(false);
   const [dnsStatus, setDnsStatus] = useState<'pending' | 'verified' | 'failed'>('pending');
   const [selectedOption, setSelectedOption] = useState<'purchase' | 'existing' | 'subdomain'>(data.domainOption === 'custom' ? 'existing' : data.domainOption === 'subdomain' ? 'subdomain' : 'purchase');
+  const [setupMethod, setSetupMethod] = useState<'auto' | 'manual'>('auto');
+  const [connectedProvider, setConnectedProvider] = useState<string | null>(null);
 
   const generateSubdomain = () => {
     const cleaned = businessName.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -70,13 +72,28 @@ export const DomainStep: React.FC<DomainStepProps> = ({
     { type: 'A', name: '@', value: '104.21.45.78' },
   ];
 
+  const domainProviders = [
+    { id: 'godaddy', name: 'GoDaddy', logo: '🌐', color: 'bg-green-600' },
+    { id: 'namecheap', name: 'Namecheap', logo: '🔶', color: 'bg-orange-500' },
+    { id: 'google', name: 'Google Domains', logo: '🌍', color: 'bg-blue-600' },
+  ];
+
   const domainOptions = [
+    {
+      id: 'subdomain',
+      title: 'Use HyrHealth Subdomain',
+      description: 'Use a free subdomain powered by HyrHealth.',
+      icon: <CheckCircle2 className="h-6 w-6 text-purple-600" />,
+      recommended: true,
+      benefits: ['Free forever', 'SSL included', 'Instant setup']
+    },
     {
       id: 'purchase',
       title: 'Purchase a New Domain',
       description: "Don't have a domain? You can buy one from us.",
       icon: <Globe className="h-6 w-6 text-blue-600" />,
       recommended: false,
+      benefits: ['Full ownership', 'Professional appearance', 'SEO benefits']
     },
     {
       id: 'existing',
@@ -84,15 +101,16 @@ export const DomainStep: React.FC<DomainStepProps> = ({
       description: 'Already have a domain? Connect it here.',
       icon: <ExternalLink className="h-6 w-6 text-green-600" />,
       recommended: false,
-    },
-    {
-      id: 'subdomain',
-      title: 'Use HyrHealth Subdomain',
-      description: 'Use a free subdomain powered by HyrHealth.',
-      icon: <CheckCircle2 className="h-6 w-6 text-purple-600" />,
-      recommended: true,
+      benefits: ['Use your existing domain', 'Auto-setup available', 'Keep your brand']
     },
   ];
+
+  const handleProviderConnect = async (providerId: string) => {
+    // Simulate OAuth flow
+    setConnectedProvider(providerId);
+    setDnsStatus('verified');
+    // In real implementation, this would trigger OAuth flow
+  };
 
   return (
     <TooltipProvider>
@@ -226,7 +244,7 @@ export const DomainStep: React.FC<DomainStepProps> = ({
                     <HelpCircle size={16} className="text-slate-400" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>You'll need to update your DNS settings to connect your domain</p>
+                    <p>Choose auto-setup for supported providers or manual setup</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -246,66 +264,205 @@ export const DomainStep: React.FC<DomainStepProps> = ({
                 </div>
                 
                 {data.customDomain && (
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-2">
-                        {dnsStatus === 'pending' && <AlertCircle size={16} className="text-amber-500" />}
-                        {dnsStatus === 'verified' && <CheckCircle2 size={16} className="text-green-500" />}
-                        {dnsStatus === 'failed' && <AlertCircle size={16} className="text-red-500" />}
-                        <span className={`text-sm font-medium ${
-                          dnsStatus === 'pending' ? 'text-amber-600' : 
-                          dnsStatus === 'verified' ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          DNS Status: {dnsStatus === 'pending' ? 'Pending Verification' : 
-                                      dnsStatus === 'verified' ? 'Verified' : 'Failed'}
-                        </span>
+                  <div className="space-y-6">
+                    {/* Setup Method Selection */}
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-slate-800">Choose Setup Method</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <Card
+                          className={`p-4 cursor-pointer transition-all border-2 ${
+                            setupMethod === 'auto'
+                              ? 'border-blue-500 bg-blue-50/50'
+                              : 'border-slate-200 hover:border-slate-300'
+                          }`}
+                          onClick={() => setSetupMethod('auto')}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <Zap className="h-5 w-5 text-blue-600" />
+                            <div>
+                              <h5 className="font-medium text-slate-800">Auto-Setup</h5>
+                              <p className="text-sm text-slate-600">Connect in under 2 minutes</p>
+                            </div>
+                          </div>
+                        </Card>
+                        <Card
+                          className={`p-4 cursor-pointer transition-all border-2 ${
+                            setupMethod === 'manual'
+                              ? 'border-blue-500 bg-blue-50/50'
+                              : 'border-slate-200 hover:border-slate-300'
+                          }`}
+                          onClick={() => setSetupMethod('manual')}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <Settings className="h-5 w-5 text-slate-600" />
+                            <div>
+                              <h5 className="font-medium text-slate-800">Manual Setup</h5>
+                              <p className="text-sm text-slate-600">Configure DNS yourself</p>
+                            </div>
+                          </div>
+                        </Card>
                       </div>
                     </div>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowDNSInstructions(!showDNSInstructions)}
-                    >
-                      <ExternalLink size={16} className="mr-2" />
-                      {showDNSInstructions ? 'Hide' : 'View'} DNS Setup Instructions
-                    </Button>
-                    
-                    {showDNSInstructions && (
-                      <Card className="p-4 bg-blue-50 border-blue-200">
-                        <h4 className="font-medium text-blue-900 mb-3">DNS Configuration Required</h4>
-                        <p className="text-sm text-blue-700 mb-4">
-                          Add these DNS records in your domain provider's dashboard:
-                        </p>
-                        <div className="space-y-2">
-                          {dnsRecords.map((record, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-white rounded border">
-                              <div className="text-sm font-mono">
-                                <span className="font-medium text-blue-800">{record.type}</span>
-                                <span className="mx-2 text-slate-400">|</span>
-                                <span className="text-slate-600">{record.name}</span>
-                                <span className="mx-2 text-slate-400">→</span>
-                                <span className="text-slate-800">{record.value}</span>
+
+                    {setupMethod === 'auto' && (
+                      <div className="space-y-4">
+                        <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Shield size={16} className="text-green-600" />
+                            <span className="text-sm font-medium text-green-800">
+                              If your domain is with one of these providers, we can help you connect it automatically
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          {domainProviders.map((provider) => (
+                            <Card
+                              key={provider.id}
+                              className={`p-4 cursor-pointer transition-all border-2 ${
+                                connectedProvider === provider.id
+                                  ? 'border-green-500 bg-green-50'
+                                  : 'border-slate-200 hover:border-slate-300 hover:shadow-md'
+                              }`}
+                              onClick={() => handleProviderConnect(provider.id)}
+                            >
+                              <div className="text-center space-y-2">
+                                <div className={`w-12 h-12 rounded-full ${provider.color} flex items-center justify-center mx-auto text-white text-xl`}>
+                                  {provider.logo}
+                                </div>
+                                <h5 className="font-medium text-slate-800">{provider.name}</h5>
+                                {connectedProvider === provider.id ? (
+                                  <div className="flex items-center justify-center space-x-1 text-green-600">
+                                    <CheckCircle2 size={14} />
+                                    <span className="text-xs">Connected</span>
+                                  </div>
+                                ) : (
+                                  <Button size="sm" variant="outline" className="w-full">
+                                    Connect
+                                  </Button>
+                                )}
                               </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => copyToClipboard(record.value)}
-                              >
-                                {copied ? <Check size={16} className="text-green-600" /> : <Copy size={16} />}
-                              </Button>
-                            </div>
+                            </Card>
                           ))}
                         </div>
-                        <p className="text-xs text-blue-600 mt-3">
-                          💡 DNS changes may take up to 24-48 hours to propagate globally.
-                        </p>
+                        
+                        <div className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSetupMethod('manual')}
+                            className="text-slate-600"
+                          >
+                            Don't see your provider? Use manual setup
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {setupMethod === 'manual' && (
+                      <div className="space-y-4">
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-2">
+                            {dnsStatus === 'pending' && <AlertCircle size={16} className="text-amber-500" />}
+                            {dnsStatus === 'verified' && <CheckCircle2 size={16} className="text-green-500" />}
+                            {dnsStatus === 'failed' && <AlertCircle size={16} className="text-red-500" />}
+                            <span className={`text-sm font-medium ${
+                              dnsStatus === 'pending' ? 'text-amber-600' : 
+                              dnsStatus === 'verified' ? 'text-green-600' : 'text-red-600'
+                            }`}>
+                              DNS Status: {dnsStatus === 'pending' ? 'Pending Verification' : 
+                                          dnsStatus === 'verified' ? 'Verified' : 'Failed'}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowDNSInstructions(!showDNSInstructions)}
+                        >
+                          <ExternalLink size={16} className="mr-2" />
+                          {showDNSInstructions ? 'Hide' : 'View'} DNS Setup Instructions
+                        </Button>
+                        
+                        {showDNSInstructions && (
+                          <Card className="p-4 bg-blue-50 border-blue-200">
+                            <h4 className="font-medium text-blue-900 mb-3">DNS Configuration Required</h4>
+                            <p className="text-sm text-blue-700 mb-4">
+                              Add these DNS records in your domain provider's dashboard:
+                            </p>
+                            <div className="space-y-2">
+                              {dnsRecords.map((record, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 bg-white rounded border">
+                                  <div className="text-sm font-mono">
+                                    <span className="font-medium text-blue-800">{record.type}</span>
+                                    <span className="mx-2 text-slate-400">|</span>
+                                    <span className="text-slate-600">{record.name}</span>
+                                    <span className="mx-2 text-slate-400">→</span>
+                                    <span className="text-slate-800">{record.value}</span>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => copyToClipboard(record.value)}
+                                  >
+                                    {copied ? <Check size={16} className="text-green-600" /> : <Copy size={16} />}
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                            <p className="text-xs text-blue-600 mt-3">
+                              💡 DNS changes may take up to 24-48 hours to propagate globally.
+                            </p>
+                          </Card>
+                        )}
+                        
+                        <Button className="bg-green-600 hover:bg-green-700">
+                          Verify and Connect
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Domain Status Summary */}
+                    {(connectedProvider || dnsStatus === 'verified') && (
+                      <Card className="p-4 bg-green-50 border-green-200">
+                        <h4 className="font-medium text-green-900 mb-3">Domain Connection Summary</h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center justify-between">
+                            <span className="text-green-700">Domain Name:</span>
+                            <span className="font-medium text-green-900">{data.customDomain}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-green-700">Setup Method:</span>
+                            <span className="font-medium text-green-900">
+                              {connectedProvider ? `Auto via ${domainProviders.find(p => p.id === connectedProvider)?.name}` : 'Manual'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-green-700">DNS Status:</span>
+                            <span className="font-medium text-green-900 flex items-center space-x-1">
+                              <CheckCircle2 size={14} />
+                              <span>Verified</span>
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-green-700">SSL Status:</span>
+                            <span className="font-medium text-green-900 flex items-center space-x-1">
+                              <CheckCircle2 size={14} />
+                              <span>Active</span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-green-200">
+                          <Button variant="outline" size="sm" className="mr-2">
+                            Recheck DNS
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => setSetupMethod(setupMethod === 'auto' ? 'manual' : 'auto')}>
+                            Change Setup Method
+                          </Button>
+                        </div>
                       </Card>
                     )}
-                    
-                    <Button className="bg-green-600 hover:bg-green-700">
-                      Verify and Connect
-                    </Button>
                   </div>
                 )}
               </div>

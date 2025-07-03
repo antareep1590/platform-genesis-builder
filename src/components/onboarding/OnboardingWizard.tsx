@@ -125,6 +125,7 @@ export const OnboardingWizard = () => {
             onboardingData={onboardingData}
             onNext={nextStep}
             onPrev={prevStep}
+            onGoToStep={goToStep}
           />
         );
       case 5:
