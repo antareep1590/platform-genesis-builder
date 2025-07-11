@@ -31,6 +31,9 @@ export const OnboardingWizard = () => {
       businessName: '',
       businessType: '',
       platformPurpose: [],
+      supportEmail: '',
+      supportPhone: '',
+      phoneSupportHours: '',
     },
     template: {
       selectedTemplate: '',

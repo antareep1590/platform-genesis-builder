@@ -2,6 +2,9 @@ export interface BusinessInfo {
   businessName: string;
   businessType: string;
   platformPurpose: string[];
+  supportEmail: string;
+  supportPhone: string;
+  phoneSupportHours: string;
 }
 
 export interface Template {

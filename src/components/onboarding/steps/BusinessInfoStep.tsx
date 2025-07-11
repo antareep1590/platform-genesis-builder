@@ -43,7 +43,8 @@ export const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({
     onUpdate({ ...data, platformPurpose: updatedPurposes });
   };
 
-  const isValid = data.businessName && data.businessType && data.platformPurpose.length > 0;
+  const isValid = data.businessName && data.businessType && data.platformPurpose.length > 0 && 
+                   data.supportEmail && data.supportPhone && data.phoneSupportHours;
 
   return (
     <div className="space-y-6">
@@ -111,6 +112,61 @@ export const BusinessInfoStep: React.FC<BusinessInfoStepProps> = ({
                   </Label>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div className="space-y-6 pt-6 border-t border-slate-200">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">Support Contact Information</h3>
+              <p className="text-sm text-slate-600 mb-6">
+                This information will be displayed to your customers for support inquiries.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="supportEmail" className="text-sm font-medium text-slate-700">
+                  Support Email *
+                </Label>
+                <Input
+                  id="supportEmail"
+                  type="email"
+                  placeholder="support@yourbusiness.com"
+                  value={data.supportEmail}
+                  onChange={(e) => onUpdate({ ...data, supportEmail: e.target.value })}
+                  className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="supportPhone" className="text-sm font-medium text-slate-700">
+                  Support Phone *
+                </Label>
+                <Input
+                  id="supportPhone"
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  value={data.supportPhone}
+                  onChange={(e) => onUpdate({ ...data, supportPhone: e.target.value })}
+                  className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phoneSupportHours" className="text-sm font-medium text-slate-700">
+                Phone Support Hours *
+              </Label>
+              <Input
+                id="phoneSupportHours"
+                placeholder="Monday - Friday, 9:00 AM - 5:00 PM EST"
+                value={data.phoneSupportHours}
+                onChange={(e) => onUpdate({ ...data, phoneSupportHours: e.target.value })}
+                className="h-12 border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                Example: "Monday - Friday, 9:00 AM - 6:00 PM EST" or "24/7 Support Available"
+              </p>
             </div>
           </div>
         </div>
