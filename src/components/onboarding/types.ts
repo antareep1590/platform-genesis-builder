@@ -59,6 +59,28 @@ export interface Legal {
   };
 }
 
+export interface LegitScript {
+  applyNow: boolean;
+  businessName: string;
+  npiNumber: string;
+  documentsSignature: {
+    document1: boolean;
+    document2: boolean;
+    document3: boolean;
+  };
+}
+
+export interface BankUnderwriting {
+  businessName: string;
+  ein: string;
+  authorizedRepName: string;
+  dateOfBirth: string;
+  businessAddress: string;
+  idUpload: File | null;
+  termsAccepted: boolean;
+  eSignCompleted: boolean;
+}
+
 export interface Payment {
   completed: boolean;
   transactionId: string;
@@ -71,5 +93,7 @@ export interface OnboardingData {
   branding: Branding;
   domain: Domain;
   legal: Legal;
+  legitScript: LegitScript;
+  bankUnderwriting: BankUnderwriting;
   payment: Payment;
 }

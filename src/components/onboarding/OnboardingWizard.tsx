@@ -11,6 +11,8 @@ import { PricingStep } from './steps/PricingStep';
 import { DomainStep } from './steps/DomainStep';
 import { LegalStep } from './steps/LegalStep';
 import { LaunchStep } from './steps/LaunchStep';
+import { LegitScriptStep } from './steps/LegitScriptStep';
+import { BankUnderwritingStep } from './steps/BankUnderwritingStep';
 import { OnboardingData } from './types';
 
 const steps = [
@@ -21,7 +23,9 @@ const steps = [
   { id: 5, title: 'Pricing & Payment', description: 'Complete your purchase' },
   { id: 6, title: 'Domain Setup', description: 'Configure your domain' },
   { id: 7, title: 'Legal Documents', description: 'Upload legal requirements' },
-  { id: 8, title: 'Launch', description: 'Review and go live' }
+  { id: 8, title: 'LegitScript Certification', description: 'Optional health product certification' },
+  { id: 9, title: 'Bank Verification', description: 'Payment processing setup' },
+  { id: 10, title: 'Launch', description: 'Review and go live' }
 ];
 
 export const OnboardingWizard = () => {
@@ -65,6 +69,26 @@ export const OnboardingWizard = () => {
       hipaaCompliance: null,
       useTemplates: true,
       additionalDocuments: [],
+    },
+    legitScript: {
+      applyNow: true,
+      businessName: '',
+      npiNumber: '',
+      documentsSignature: {
+        document1: false,
+        document2: false,
+        document3: false,
+      },
+    },
+    bankUnderwriting: {
+      businessName: '',
+      ein: '',
+      authorizedRepName: '',
+      dateOfBirth: '',
+      businessAddress: '',
+      idUpload: null,
+      termsAccepted: false,
+      eSignCompleted: false,
     },
     payment: {
       completed: false,
@@ -160,6 +184,24 @@ export const OnboardingWizard = () => {
           />
         );
       case 8:
+        return (
+          <LegitScriptStep
+            data={onboardingData.legitScript}
+            onUpdate={(data) => updateOnboardingData({ legitScript: data })}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+        );
+      case 9:
+        return (
+          <BankUnderwritingStep
+            data={onboardingData.bankUnderwriting}
+            onUpdate={(data) => updateOnboardingData({ bankUnderwriting: data })}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+        );
+      case 10:
         return (
           <LaunchStep
             onboardingData={onboardingData}
