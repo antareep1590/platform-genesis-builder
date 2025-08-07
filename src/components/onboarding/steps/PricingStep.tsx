@@ -2,10 +2,9 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronLeft, CreditCard, Shield, Check, Info, Calendar } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { ChevronLeft, ExternalLink, Shield, Check, Info, DollarSign } from 'lucide-react';
 import { Payment } from '../types';
 
 interface PricingStepProps {
@@ -21,18 +20,18 @@ export const PricingStep: React.FC<PricingStepProps> = ({
   onNext,
   onPrev
 }) => {
-  const [cardDetails, setCardDetails] = useState({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardholderName: '',
-    billingZip: ''
-  });
   const [processing, setProcessing] = useState(false);
 
-  const handlePayment = async () => {
+  const handlePaymentRedirect = async () => {
     setProcessing(true);
-    // Simulate payment processing
+    
+    // TODO: Replace with actual Stripe payment link
+    const paymentLink = "https://checkout.stripe.com/pay/setup-fee";
+    
+    // Open Stripe checkout in a new tab
+    window.open(paymentLink, '_blank');
+    
+    // For demo purposes, simulate completion after redirect
     setTimeout(() => {
       onUpdate({
         completed: true,
@@ -41,40 +40,15 @@ export const PricingStep: React.FC<PricingStepProps> = ({
       });
       setProcessing(false);
       onNext();
-    }, 2000);
-  };
-
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = matches && matches[0] || '';
-    const parts = [];
-    
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-    
-    if (parts.length) {
-      return parts.join(' ');
-    } else {
-      return v;
-    }
-  };
-
-  const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    if (v.length >= 2) {
-      return v.substring(0, 2) + '/' + v.substring(2, 4);
-    }
-    return v;
+    }, 3000);
   };
 
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-slate-800 mb-4">Choose Your Annual Plan</h2>
+        <h2 className="text-3xl font-bold text-slate-800 mb-4">Platform Setup Fee</h2>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Get complete access to your branded telehealth platform with 12 months of hosting, updates, and support.
+          Complete your platform setup with a one-time payment to get your branded telehealth platform live.
         </p>
       </div>
 
@@ -82,23 +56,24 @@ export const PricingStep: React.FC<PricingStepProps> = ({
         {/* Pricing Summary */}
         <div className="space-y-6">
           <Card className="p-6 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-            <h3 className="text-xl font-semibold text-slate-800 mb-4">Annual Plan - $997/year</h3>
+            <h3 className="text-xl font-semibold text-slate-800 mb-4">One-Time Setup Fee</h3>
             
             <div className="space-y-4">
               <div className="flex justify-between items-center py-3 border-b">
-                <span className="text-slate-600">Annual Subscription Fee</span>
-                <span className="text-2xl font-bold text-slate-800">$997</span>
+                <span className="text-slate-600">Platform Setup Fee</span>
+                <span className="text-2xl font-bold text-slate-800">$5,000</span>
               </div>
               
               <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 mb-4">
                 <div className="flex items-start space-x-3">
-                  <Calendar size={20} className="text-blue-600 mt-1" />
+                  <DollarSign size={20} className="text-blue-600 mt-1" />
                   <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">Billing Information</p>
-                    <p className="mb-2">Your subscription includes access to the complete platform, hosting, security updates, and feature rollouts for 12 months.</p>
+                    <p className="font-medium mb-1">Payment Options</p>
+                    <p className="mb-2">Choose your preferred payment method during checkout - credit card or ACH bank transfer.</p>
                     <div className="space-y-1">
-                      <div>• Renewal Date: {new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString()}</div>
-                      <div>• Cancel anytime before renewal to avoid charges</div>
+                      <div>• Secure Stripe payment processing</div>
+                      <div>• Multiple payment methods accepted</div>
+                      <div>• Instant platform activation upon payment</div>
                     </div>
                   </div>
                 </div>
@@ -150,98 +125,24 @@ export const PricingStep: React.FC<PricingStepProps> = ({
 
         {/* Payment Form */}
         <Card className="p-6 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-          <div className="flex items-center space-x-2 mb-4">
-            <CreditCard className="text-slate-600" />
-            <h3 className="text-xl font-semibold text-slate-800">Payment Information</h3>
+          <div className="flex items-center space-x-2 mb-6">
+            <ExternalLink className="text-slate-600" />
+            <h3 className="text-xl font-semibold text-slate-800">Complete Your Payment</h3>
           </div>
           
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="cardholderName" className="text-sm font-medium text-slate-700">
-                Cardholder Name
-              </Label>
-              <Input
-                id="cardholderName"
-                placeholder="John Doe"
-                value={cardDetails.cardholderName}
-                onChange={(e) => setCardDetails({ ...cardDetails, cardholderName: e.target.value })}
-                className="h-12"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cardNumber" className="text-sm font-medium text-slate-700">
-                Card Number
-              </Label>
-              <Input
-                id="cardNumber"
-                placeholder="1234 5678 9012 3456"
-                value={cardDetails.cardNumber}
-                onChange={(e) => setCardDetails({ 
-                  ...cardDetails, 
-                  cardNumber: formatCardNumber(e.target.value) 
-                })}
-                maxLength={19}
-                className="h-12"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="expiryDate" className="text-sm font-medium text-slate-700">
-                  Expiry Date
-                </Label>
-                <Input
-                  id="expiryDate"
-                  placeholder="MM/YY"
-                  value={cardDetails.expiryDate}
-                  onChange={(e) => setCardDetails({ 
-                    ...cardDetails, 
-                    expiryDate: formatExpiryDate(e.target.value) 
-                  })}
-                  maxLength={5}
-                  className="h-12"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="cvv" className="text-sm font-medium text-slate-700">
-                  CVV
-                </Label>
-                <Input
-                  id="cvv"
-                  placeholder="123"
-                  value={cardDetails.cvv}
-                  onChange={(e) => setCardDetails({ 
-                    ...cardDetails, 
-                    cvv: e.target.value.replace(/[^0-9]/g, '').substring(0, 4) 
-                  })}
-                  className="h-12"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="billingZip" className="text-sm font-medium text-slate-700">
-                Billing ZIP Code
-              </Label>
-              <Input
-                id="billingZip"
-                placeholder="12345"
-                value={cardDetails.billingZip}
-                onChange={(e) => setCardDetails({ 
-                  ...cardDetails, 
-                  billingZip: e.target.value.replace(/[^0-9]/g, '').substring(0, 5) 
-                })}
-                className="h-12"
-              />
-            </div>
-
-            <div className="flex items-center space-x-2 p-4 bg-green-50 rounded-lg border border-green-200">
-              <Shield size={20} className="text-green-600" />
-              <div className="text-sm text-green-800">
-                <div className="font-medium">Secure Payment</div>
-                <div>Your payment information is encrypted and secure</div>
+          <div className="space-y-6">
+            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-start space-x-3">
+                <Shield size={20} className="text-green-600" />
+                <div className="text-sm text-green-800">
+                  <div className="font-medium mb-1">Secure Stripe Payment</div>
+                  <div>You'll be redirected to Stripe's secure payment page where you can choose to pay with:</div>
+                  <div className="mt-2 space-y-1">
+                    <div>• Credit or Debit Card</div>
+                    <div>• ACH Bank Transfer</div>
+                    <div>• Other supported payment methods</div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -252,24 +153,31 @@ export const PricingStep: React.FC<PricingStepProps> = ({
                 onCheckedChange={(checked) => onUpdate({ ...data, acceptedTerms: !!checked })}
               />
               <Label htmlFor="terms" className="text-sm text-slate-700 leading-relaxed">
-                I agree to the recurring billing terms and authorize HyrHealth to charge my payment method $997 annually. I understand I can cancel anytime before my renewal date.
+                I agree to the payment terms and authorize the one-time setup fee of $5,000 to activate my telehealth platform.
               </Label>
             </div>
 
             <Button
-              onClick={handlePayment}
-              disabled={processing || !cardDetails.cardNumber || !cardDetails.expiryDate || !cardDetails.cvv || !cardDetails.cardholderName || !data.acceptedTerms}
-              className="w-full h-12 bg-green-600 hover:bg-green-700 text-white font-medium"
+              onClick={handlePaymentRedirect}
+              disabled={processing || !data.acceptedTerms}
+              className="w-full h-14 bg-green-600 hover:bg-green-700 text-white font-medium text-lg"
             >
               {processing ? (
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Processing Payment...</span>
+                  <span>Redirecting to Payment...</span>
                 </div>
               ) : (
-                `Start Annual Plan - $997/year`
+                <div className="flex items-center space-x-2">
+                  <span>Pay $5,000 Setup Fee</span>
+                  <ExternalLink size={18} />
+                </div>
               )}
             </Button>
+            
+            <p className="text-xs text-slate-500 text-center">
+              You'll be redirected to Stripe's secure payment page in a new tab
+            </p>
           </div>
         </Card>
       </div>
