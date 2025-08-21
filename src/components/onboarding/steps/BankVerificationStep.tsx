@@ -34,6 +34,11 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
     onUpdate({ ...data, [field]: value });
   };
 
+  const handleNumericChange = (field: string, value: string) => {
+    const numValue = value === '' ? 0 : parseInt(value) || 0;
+    onUpdate({ ...data, [field]: numValue });
+  };
+
   const handleNestedChange = (parent: string, field: string, value: any) => {
     const parentData = data[parent as keyof BankVerification] as any;
     onUpdate({
@@ -112,10 +117,34 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
   };
 
   const isValid = () => {
-    return data.firstName && data.lastName && data.dateOfBirth && data.ssn &&
-           data.legalBusinessName && data.taxId && data.bankName && 
-           data.routingNumber && data.accountNumber && data.driverLicense &&
-           data.bankStatements.length >= 3 && data.incorporationDocs;
+    // Personal Info
+    const personalValid = data.firstName && data.lastName && data.dateOfBirth && 
+                         data.ssn && data.contactPhone && data.contactEmail &&
+                         data.address.street && data.address.city && 
+                         data.address.state && data.address.zipCode;
+    
+    // Business Info
+    const businessValid = data.ownershipType && data.legalBusinessName && 
+                         data.taxId && data.businessType && data.premiseType &&
+                         data.businessPhone && data.businessEmail;
+    
+    // Business Address validation
+    const businessAddressValid = data.businessAddressSameAsPersonal || 
+                                (data.businessAddress.street && data.businessAddress.city && 
+                                 data.businessAddress.state && data.businessAddress.zipCode);
+    
+    // Bank Info
+    const bankValid = data.bankName && data.routingNumber && data.accountNumber;
+    
+    // Processing Info
+    const processingValid = data.processingMethods.length > 0;
+    
+    // Documents
+    const documentsValid = data.driverLicense && data.bankStatements.length >= 3 && 
+                          data.incorporationDocs;
+    
+    return personalValid && businessValid && businessAddressValid && bankValid && 
+           processingValid && documentsValid;
   };
 
   const progress = calculateProgress();
@@ -205,16 +234,16 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="ownershipPercentage" className="text-sm font-medium text-slate-700">Ownership Percentage</Label>
-              <Input
-                id="ownershipPercentage"
-                type="number"
-                min="0"
-                max="100"
-                value={data.ownershipPercentage}
-                onChange={(e) => handleInputChange('ownershipPercentage', parseInt(e.target.value))}
-                placeholder="25"
-                className="mt-1"
-              />
+                <Input
+                  id="ownershipPercentage"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={data.ownershipPercentage || ''}
+                  onChange={(e) => handleNumericChange('ownershipPercentage', e.target.value)}
+                  placeholder="25"
+                  className="mt-1"
+                />
             </div>
             <div>
               <Label htmlFor="contactPhone" className="text-sm font-medium text-slate-700">Contact Phone</Label>
@@ -362,8 +391,8 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
                     placeholder="Ownership %"
                     min="0"
                     max="100"
-                    value={owner.ownershipPercentage}
-                    onChange={(e) => handleArrayChange('otherOwners', index, { ...owner, ownershipPercentage: parseInt(e.target.value) })}
+                    value={owner.ownershipPercentage || ''}
+                    onChange={(e) => handleArrayChange('otherOwners', index, { ...owner, ownershipPercentage: e.target.value === '' ? 0 : parseInt(e.target.value) || 0 })}
                     className="w-32"
                   />
                   <Button
@@ -495,8 +524,8 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
                 id="yearsInBusiness"
                 type="number"
                 min="0"
-                value={data.yearsInBusiness}
-                onChange={(e) => handleInputChange('yearsInBusiness', parseInt(e.target.value))}
+                value={data.yearsInBusiness || ''}
+                onChange={(e) => handleNumericChange('yearsInBusiness', e.target.value)}
                 className="mt-1"
               />
             </div>
@@ -729,8 +758,8 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
                 id="maxMonthlySales"
                 type="number"
                 min="0"
-                value={data.maxMonthlySales}
-                onChange={(e) => handleInputChange('maxMonthlySales', parseInt(e.target.value))}
+                value={data.maxMonthlySales || ''}
+                onChange={(e) => handleNumericChange('maxMonthlySales', e.target.value)}
                 className="mt-1"
               />
             </div>
@@ -740,8 +769,8 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
                 id="avgTransaction"
                 type="number"
                 min="0"
-                value={data.avgTransaction}
-                onChange={(e) => handleInputChange('avgTransaction', parseInt(e.target.value))}
+                value={data.avgTransaction || ''}
+                onChange={(e) => handleNumericChange('avgTransaction', e.target.value)}
                 className="mt-1"
               />
             </div>
@@ -751,8 +780,8 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
                 id="highestTransaction"
                 type="number"
                 min="0"
-                value={data.highestTransaction}
-                onChange={(e) => handleInputChange('highestTransaction', parseInt(e.target.value))}
+                value={data.highestTransaction || ''}
+                onChange={(e) => handleNumericChange('highestTransaction', e.target.value)}
                 className="mt-1"
               />
             </div>
