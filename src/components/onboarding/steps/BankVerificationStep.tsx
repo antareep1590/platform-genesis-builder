@@ -945,7 +945,6 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
           </Button>
           <Button 
             onClick={onSubmit} 
-            disabled={!isValid()}
             className="bg-green-600 hover:bg-green-700 text-white"
           >
             Submit Application
