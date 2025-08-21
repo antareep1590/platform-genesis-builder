@@ -13,6 +13,7 @@ import { LegalStep } from './steps/LegalStep';
 import { LaunchStep } from './steps/LaunchStep';
 import { LegitScriptStep } from './steps/LegitScriptStep';
 import { BankUnderwritingStep } from './steps/BankUnderwritingStep';
+import { BankVerificationStep } from './steps/BankVerificationStep';
 import { OnboardingData } from './types';
 
 const steps = [
@@ -23,9 +24,10 @@ const steps = [
   { id: 5, title: 'Pricing & Payment', description: 'Complete your purchase' },
   { id: 6, title: 'Domain Setup', description: 'Configure your domain' },
   { id: 7, title: 'Legal Documents', description: 'Upload legal requirements' },
-  { id: 8, title: 'LegitScript Certification', description: 'Optional health product certification' },
-  { id: 9, title: 'Bank Verification', description: 'Payment processing setup' },
-  { id: 10, title: 'Launch', description: 'Review and go live' }
+  { id: 8, title: 'Bank Verification', description: 'RevitPay pre-application form' },
+  { id: 9, title: 'LegitScript Certification', description: 'Optional health product certification' },
+  { id: 10, title: 'Bank Underwriting', description: 'Final payment processing setup' },
+  { id: 11, title: 'Launch', description: 'Review and go live' }
 ];
 
 export const OnboardingWizard = () => {
@@ -70,6 +72,59 @@ export const OnboardingWizard = () => {
       useTemplates: true,
       additionalDocuments: [],
     },
+    bankVerification: {
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      ssn: '',
+      ownershipPercentage: 0,
+      contactPhone: '',
+      contactEmail: '',
+      address: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+      },
+      idDetails: {
+        idType: '',
+        idNumber: '',
+        expirationDate: '',
+      },
+      hasOtherOwners: false,
+      otherOwners: [],
+      ownershipType: '',
+      legalBusinessName: '',
+      dbaName: '',
+      taxId: '',
+      businessType: '',
+      premiseType: '',
+      yearsInBusiness: 0,
+      businessWebsite: '',
+      businessAddress: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+      },
+      businessPhone: '',
+      businessEmail: '',
+      bankName: '',
+      routingNumber: '',
+      accountNumber: '',
+      currentlyProcessing: false,
+      processingMethods: [],
+      maxMonthlySales: 0,
+      avgTransaction: 0,
+      highestTransaction: 0,
+      fraudProtection: false,
+      acceptACH: false,
+      businessFundingInterest: false,
+      driverLicense: null,
+      bankStatements: [],
+      incorporationDocs: null,
+      wantsLegitScript: false,
+    },
     legitScript: {
       applyNow: true,
       businessName: '',
@@ -102,13 +157,19 @@ export const OnboardingWizard = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < steps.length) {
+    if (currentStep === 8 && !onboardingData.bankVerification.wantsLegitScript) {
+      // Skip LegitScript step if user doesn't want it
+      setCurrentStep(10);
+    } else if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) {
+    if (currentStep === 10 && !onboardingData.bankVerification.wantsLegitScript) {
+      // Skip back to Bank Verification step if LegitScript was skipped
+      setCurrentStep(8);
+    } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -185,6 +246,22 @@ export const OnboardingWizard = () => {
         );
       case 8:
         return (
+          <BankVerificationStep
+            data={onboardingData.bankVerification}
+            onUpdate={(data) => updateOnboardingData({ bankVerification: data })}
+            onNext={nextStep}
+            onPrev={prevStep}
+            prefillData={{
+              firstName: onboardingData.businessInfo.businessName.split(' ')[0] || '',
+              lastName: onboardingData.businessInfo.businessName.split(' ').slice(1).join(' ') || '',
+              businessName: onboardingData.businessInfo.businessName,
+              businessPhone: onboardingData.businessInfo.supportPhone,
+              businessEmail: onboardingData.businessInfo.supportEmail,
+            }}
+          />
+        );
+      case 9:
+        return (
           <LegitScriptStep
             data={onboardingData.legitScript}
             onUpdate={(data) => updateOnboardingData({ legitScript: data })}
@@ -192,7 +269,7 @@ export const OnboardingWizard = () => {
             onPrev={prevStep}
           />
         );
-      case 9:
+      case 10:
         return (
           <BankUnderwritingStep
             data={onboardingData.bankUnderwriting}
@@ -201,7 +278,7 @@ export const OnboardingWizard = () => {
             onPrev={prevStep}
           />
         );
-      case 10:
+      case 11:
         return (
           <LaunchStep
             onboardingData={onboardingData}

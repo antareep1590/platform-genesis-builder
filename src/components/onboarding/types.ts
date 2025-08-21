@@ -59,6 +59,74 @@ export interface Legal {
   };
 }
 
+export interface BankVerification {
+  // Personal Info
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  ssn: string;
+  ownershipPercentage: number;
+  contactPhone: string;
+  contactEmail: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  idDetails: {
+    idType: string;
+    idNumber: string;
+    expirationDate: string;
+  };
+  hasOtherOwners: boolean;
+  otherOwners: Array<{
+    name: string;
+    ownershipPercentage: number;
+  }>;
+
+  // Business Info
+  ownershipType: string;
+  legalBusinessName: string;
+  dbaName: string;
+  taxId: string;
+  businessType: string;
+  premiseType: string;
+  yearsInBusiness: number;
+  businessWebsite: string;
+  businessAddress: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  businessPhone: string;
+  businessEmail: string;
+
+  // Bank Info
+  bankName: string;
+  routingNumber: string;
+  accountNumber: string;
+
+  // Processing Info
+  currentlyProcessing: boolean;
+  processingMethods: string[];
+  maxMonthlySales: number;
+  avgTransaction: number;
+  highestTransaction: number;
+  fraudProtection: boolean;
+  acceptACH: boolean;
+  businessFundingInterest: boolean;
+
+  // Document Uploads
+  driverLicense: File | null;
+  bankStatements: File[];
+  incorporationDocs: File | null;
+
+  // LegitScript question
+  wantsLegitScript: boolean;
+}
+
 export interface LegitScript {
   applyNow: boolean;
   businessName: string;
@@ -93,6 +161,7 @@ export interface OnboardingData {
   branding: Branding;
   domain: Domain;
   legal: Legal;
+  bankVerification: BankVerification;
   legitScript: LegitScript;
   bankUnderwriting: BankUnderwriting;
   payment: Payment;
