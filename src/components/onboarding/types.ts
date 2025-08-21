@@ -138,16 +138,6 @@ export interface LegitScript {
   };
 }
 
-export interface BankUnderwriting {
-  businessName: string;
-  ein: string;
-  authorizedRepName: string;
-  dateOfBirth: string;
-  businessAddress: string;
-  idUpload: File | null;
-  termsAccepted: boolean;
-  eSignCompleted: boolean;
-}
 
 export interface Payment {
   completed: boolean;
@@ -163,6 +153,6 @@ export interface OnboardingData {
   legal: Legal;
   bankVerification: BankVerification;
   legitScript: LegitScript;
-  bankUnderwriting: BankUnderwriting;
+  
   payment: Payment;
 }

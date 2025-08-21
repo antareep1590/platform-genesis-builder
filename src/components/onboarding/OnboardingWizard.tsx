@@ -12,7 +12,7 @@ import { DomainStep } from './steps/DomainStep';
 import { LegalStep } from './steps/LegalStep';
 import { LaunchStep } from './steps/LaunchStep';
 import { LegitScriptStep } from './steps/LegitScriptStep';
-import { BankUnderwritingStep } from './steps/BankUnderwritingStep';
+
 import { BankVerificationStep } from './steps/BankVerificationStep';
 import { OnboardingData } from './types';
 
@@ -26,8 +26,7 @@ const steps = [
   { id: 7, title: 'Legal Documents', description: 'Upload legal requirements' },
   { id: 8, title: 'Bank Verification', description: 'RevitPay pre-application form' },
   { id: 9, title: 'LegitScript Certification', description: 'Optional health product certification' },
-  { id: 10, title: 'Bank Underwriting', description: 'Final payment processing setup' },
-  { id: 11, title: 'Launch', description: 'Review and go live' }
+  { id: 10, title: 'Launch', description: 'Review and go live' }
 ];
 
 export const OnboardingWizard = () => {
@@ -134,16 +133,6 @@ export const OnboardingWizard = () => {
         document2: false,
         document3: false,
       },
-    },
-    bankUnderwriting: {
-      businessName: '',
-      ein: '',
-      authorizedRepName: '',
-      dateOfBirth: '',
-      businessAddress: '',
-      idUpload: null,
-      termsAccepted: false,
-      eSignCompleted: false,
     },
     payment: {
       completed: false,
@@ -270,15 +259,6 @@ export const OnboardingWizard = () => {
           />
         );
       case 10:
-        return (
-          <BankUnderwritingStep
-            data={onboardingData.bankUnderwriting}
-            onUpdate={(data) => updateOnboardingData({ bankUnderwriting: data })}
-            onNext={nextStep}
-            onPrev={prevStep}
-          />
-        );
-      case 11:
         return (
           <LaunchStep
             onboardingData={onboardingData}
