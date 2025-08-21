@@ -5,6 +5,19 @@ export interface BusinessInfo {
   supportEmail: string;
   supportPhone: string;
   phoneSupportHours: string;
+  personalAddress: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
+  businessAddressSameAsPersonal: boolean;
+  businessAddress: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
 }
 
 export interface Template {

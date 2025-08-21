@@ -39,6 +39,19 @@ export const OnboardingWizard = () => {
       supportEmail: '',
       supportPhone: '',
       phoneSupportHours: '',
+      personalAddress: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+      },
+      businessAddressSameAsPersonal: true,
+      businessAddress: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: '',
+      },
     },
     template: {
       selectedTemplate: '',
