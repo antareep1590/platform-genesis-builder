@@ -516,45 +516,88 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
 
         {/* Business Address */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-slate-900">Business Address</h3>
-          <div>
-            <Label htmlFor="businessStreet" className="text-sm font-medium text-slate-700">Street Address</Label>
-            <Input
-              id="businessStreet"
-              value={data.businessAddress.street}
-              onChange={(e) => handleNestedChange('businessAddress', 'street', e.target.value)}
-              className="mt-1"
-            />
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-medium text-slate-900">Business Address</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <div className="space-y-4 p-4 bg-slate-50 rounded-lg">
             <div>
-              <Label htmlFor="businessCity" className="text-sm font-medium text-slate-700">City</Label>
-              <Input
-                id="businessCity"
-                value={data.businessAddress.city}
-                onChange={(e) => handleNestedChange('businessAddress', 'city', e.target.value)}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="businessState" className="text-sm font-medium text-slate-700">State</Label>
-              <Input
-                id="businessState"
-                value={data.businessAddress.state}
-                onChange={(e) => handleNestedChange('businessAddress', 'state', e.target.value)}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="businessZip" className="text-sm font-medium text-slate-700">ZIP Code</Label>
-              <Input
-                id="businessZip"
-                value={data.businessAddress.zipCode}
-                onChange={(e) => handleNestedChange('businessAddress', 'zipCode', e.target.value)}
-                className="mt-1"
-              />
+              <Label className="text-sm font-medium text-slate-700">
+                Is Business Address same as Personal Address? *
+              </Label>
+              <div className="flex gap-6 mt-2">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id="address-same-yes"
+                    name="businessAddressSameAsPersonal"
+                    checked={data.businessAddressSameAsPersonal}
+                    onChange={() => handleInputChange('businessAddressSameAsPersonal', true)}
+                    className="text-blue-600"
+                  />
+                  <Label htmlFor="address-same-yes" className="text-sm font-medium text-slate-700">
+                    Yes
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    id="address-same-no"
+                    name="businessAddressSameAsPersonal"
+                    checked={!data.businessAddressSameAsPersonal}
+                    onChange={() => handleInputChange('businessAddressSameAsPersonal', false)}
+                    className="text-blue-600"
+                  />
+                  <Label htmlFor="address-same-no" className="text-sm font-medium text-slate-700">
+                    No
+                  </Label>
+                </div>
+              </div>
             </div>
           </div>
+
+          {!data.businessAddressSameAsPersonal && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="businessStreet" className="text-sm font-medium text-slate-700">Street Address</Label>
+                <Input
+                  id="businessStreet"
+                  value={data.businessAddress.street}
+                  onChange={(e) => handleNestedChange('businessAddress', 'street', e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="businessCity" className="text-sm font-medium text-slate-700">City</Label>
+                  <Input
+                    id="businessCity"
+                    value={data.businessAddress.city}
+                    onChange={(e) => handleNestedChange('businessAddress', 'city', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="businessState" className="text-sm font-medium text-slate-700">State</Label>
+                  <Input
+                    id="businessState"
+                    value={data.businessAddress.state}
+                    onChange={(e) => handleNestedChange('businessAddress', 'state', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="businessZip" className="text-sm font-medium text-slate-700">ZIP Code</Label>
+                  <Input
+                    id="businessZip"
+                    value={data.businessAddress.zipCode}
+                    onChange={(e) => handleNestedChange('businessAddress', 'zipCode', e.target.value)}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
