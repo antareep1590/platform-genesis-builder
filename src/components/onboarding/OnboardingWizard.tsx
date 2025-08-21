@@ -17,7 +17,7 @@ import { BankVerificationStep } from './steps/BankVerificationStep';
 import { ApplicationStatusStep } from './steps/ApplicationStatusStep';
 import { OnboardingData } from './types';
 
-const steps = [
+const allSteps = [
   { id: 1, title: 'Business Info', description: 'Tell us about your business' },
   { id: 2, title: 'Choose Template', description: 'Select your design theme' },
   { id: 3, title: 'Customize Branding', description: 'Add your brand identity' },
@@ -30,6 +30,9 @@ const steps = [
   { id: 10, title: 'LegitScript Certification', description: 'Optional health product certification' },
   { id: 11, title: 'Launch', description: 'Review and go live' }
 ];
+
+// Filter out Application Status step from sidebar display
+const steps = allSteps.filter(step => step.id !== 9);
 
 export const OnboardingWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -158,7 +161,7 @@ export const OnboardingWizard = () => {
     if (currentStep === 9 && onboardingData.applicationStatus.status === 'approved' && !onboardingData.bankVerification.wantsLegitScript) {
       // Skip LegitScript step if application approved and user doesn't want it
       setCurrentStep(11);
-    } else if (currentStep < steps.length) {
+    } else if (currentStep < allSteps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -370,11 +373,11 @@ export const OnboardingWizard = () => {
           <div className="w-full bg-slate-200 rounded-full h-2">
             <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${(currentStep / steps.length) * 100}%` }}
+              style={{ width: `${(Math.min(currentStep, 8) / steps.length) * 100}%` }}
             />
           </div>
           <div className="text-xs text-slate-500 mt-1">
-            Step {currentStep} of {steps.length}
+            {currentStep === 9 ? 'Application Status' : `Step ${currentStep} of ${steps.length}`}
           </div>
         </div>
       </div>
@@ -384,13 +387,13 @@ export const OnboardingWizard = () => {
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-lg font-semibold text-slate-800">Platform Setup</h1>
           <span className="text-sm text-slate-600">
-            {currentStep}/{steps.length}
+            {currentStep === 9 ? 'Application Status' : `${currentStep}/${steps.length}`}
           </span>
         </div>
         <div className="w-full bg-slate-200 rounded-full h-2">
           <div
             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${(currentStep / steps.length) * 100}%` }}
+            style={{ width: `${(Math.min(currentStep, 8) / steps.length) * 100}%` }}
           />
         </div>
       </div>
