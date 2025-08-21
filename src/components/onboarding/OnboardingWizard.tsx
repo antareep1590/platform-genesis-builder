@@ -338,7 +338,7 @@ export const OnboardingWizard = () => {
                     : 'bg-slate-200 text-slate-600'
                 }`}
               >
-                {currentStep > step.id ? <Check size={16} /> : step.id}
+                {currentStep > step.id ? <Check size={16} /> : index + 1}
               </div>
               <div className="flex-1 min-w-0">
                 <p
