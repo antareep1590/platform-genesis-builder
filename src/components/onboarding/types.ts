@@ -146,6 +146,13 @@ export interface Payment {
   acceptedTerms: boolean;
 }
 
+export interface ApplicationStatus {
+  status: 'pending' | 'approved' | 'denied' | 'submitted';
+  submittedAt?: string;
+  reviewedAt?: string;
+  message?: string;
+}
+
 export interface OnboardingData {
   businessInfo: BusinessInfo;
   template: Template;
@@ -154,6 +161,6 @@ export interface OnboardingData {
   legal: Legal;
   bankVerification: BankVerification;
   legitScript: LegitScript;
-  
+  applicationStatus: ApplicationStatus;
   payment: Payment;
 }

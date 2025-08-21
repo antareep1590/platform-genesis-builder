@@ -14,6 +14,7 @@ import { LaunchStep } from './steps/LaunchStep';
 import { LegitScriptStep } from './steps/LegitScriptStep';
 
 import { BankVerificationStep } from './steps/BankVerificationStep';
+import { ApplicationStatusStep } from './steps/ApplicationStatusStep';
 import { OnboardingData } from './types';
 
 const steps = [
@@ -25,8 +26,9 @@ const steps = [
   { id: 6, title: 'Domain Setup', description: 'Configure your domain' },
   { id: 7, title: 'Legal Documents', description: 'Upload legal requirements' },
   { id: 8, title: 'Bank Verification', description: 'RevitPay pre-application form' },
-  { id: 9, title: 'LegitScript Certification', description: 'Optional health product certification' },
-  { id: 10, title: 'Launch', description: 'Review and go live' }
+  { id: 9, title: 'Application Status', description: 'Application review status' },
+  { id: 10, title: 'LegitScript Certification', description: 'Optional health product certification' },
+  { id: 11, title: 'Launch', description: 'Review and go live' }
 ];
 
 export const OnboardingWizard = () => {
@@ -135,6 +137,12 @@ export const OnboardingWizard = () => {
         document3: false,
       },
     },
+    applicationStatus: {
+      status: 'submitted',
+      submittedAt: '',
+      reviewedAt: '',
+      message: '',
+    },
     payment: {
       completed: false,
       transactionId: '',
@@ -147,21 +155,37 @@ export const OnboardingWizard = () => {
   };
 
   const nextStep = () => {
-    if (currentStep === 8 && !onboardingData.bankVerification.wantsLegitScript) {
-      // Skip LegitScript step if user doesn't want it
-      setCurrentStep(10);
+    if (currentStep === 9 && onboardingData.applicationStatus.status === 'approved' && !onboardingData.bankVerification.wantsLegitScript) {
+      // Skip LegitScript step if application approved and user doesn't want it
+      setCurrentStep(11);
     } else if (currentStep < steps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
-    if (currentStep === 10 && !onboardingData.bankVerification.wantsLegitScript) {
-      // Skip back to Bank Verification step if LegitScript was skipped
-      setCurrentStep(8);
+    if (currentStep === 11 && !onboardingData.bankVerification.wantsLegitScript) {
+      // Skip back to Application Status step if LegitScript was skipped
+      setCurrentStep(9);
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const submitApplication = () => {
+    // Submit the application and update status
+    const submissionData = {
+      status: 'submitted' as const,
+      submittedAt: new Date().toISOString(),
+      message: ''
+    };
+    updateOnboardingData({ applicationStatus: submissionData });
+    setCurrentStep(9);
+  };
+
+  const resubmitApplication = () => {
+    // Go back to bank verification step for resubmission
+    setCurrentStep(8);
   };
 
   const goToStep = (stepNumber: number) => {
@@ -239,7 +263,7 @@ export const OnboardingWizard = () => {
           <BankVerificationStep
             data={onboardingData.bankVerification}
             onUpdate={(data) => updateOnboardingData({ bankVerification: data })}
-            onNext={nextStep}
+            onSubmit={submitApplication}
             onPrev={prevStep}
             prefillData={{
               firstName: onboardingData.businessInfo.businessName.split(' ')[0] || '',
@@ -252,6 +276,15 @@ export const OnboardingWizard = () => {
         );
       case 9:
         return (
+          <ApplicationStatusStep
+            data={onboardingData.applicationStatus}
+            onUpdate={(data) => updateOnboardingData({ applicationStatus: data })}
+            onNext={nextStep}
+            onResubmit={resubmitApplication}
+          />
+        );
+      case 10:
+        return (
           <LegitScriptStep
             data={onboardingData.legitScript}
             onUpdate={(data) => updateOnboardingData({ legitScript: data })}
@@ -259,7 +292,7 @@ export const OnboardingWizard = () => {
             onPrev={prevStep}
           />
         );
-      case 10:
+      case 11:
         return (
           <LaunchStep
             onboardingData={onboardingData}

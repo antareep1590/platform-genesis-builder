@@ -12,7 +12,7 @@ import { BankVerification } from '../types';
 interface BankVerificationStepProps {
   data: BankVerification;
   onUpdate: (data: BankVerification) => void;
-  onNext: () => void;
+  onSubmit: () => void;
   onPrev: () => void;
   prefillData?: {
     firstName: string;
@@ -26,7 +26,7 @@ interface BankVerificationStepProps {
 export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
   data,
   onUpdate,
-  onNext,
+  onSubmit,
   onPrev,
   prefillData
 }) => {
@@ -915,11 +915,11 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
             Save as Draft
           </Button>
           <Button 
-            onClick={onNext} 
+            onClick={onSubmit} 
             disabled={!isValid()}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white"
           >
-            Save & Continue
+            Submit Application
           </Button>
         </div>
       </div>
