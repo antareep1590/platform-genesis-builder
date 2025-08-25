@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
 import { ChevronLeft, Rocket, ExternalLink, Settings, Users, Globe, Check, Star, Clock, AlertCircle, Copy, Loader2 } from 'lucide-react';
 import { OnboardingData } from '../types';
 
@@ -464,10 +465,3 @@ export const LaunchStep: React.FC<LaunchStepProps> = ({
     </div>
   );
 };
-
-// Helper Label component for consistency
-const Label = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div className={`text-sm font-medium text-slate-600 ${className}`}>
-    {children}
-  </div>
-);
