@@ -26,16 +26,16 @@ const allSteps = [
   { id: 6, title: 'Domain Setup', description: 'Configure your domain' },
   { id: 7, title: 'Legal Documents', description: 'Upload legal requirements' },
   { id: 8, title: 'Bank Verification', description: 'RevitPay pre-application form' },
-  { id: 9, title: 'LegitScript Certification', description: 'Optional health product certification' },
-  { id: 10, title: 'Application Status', description: 'Application review status' },
-  { id: 11, title: 'Launch', description: 'Review and go live' }
+  { id: 9, title: 'Application Status', description: 'Application review status' },
+  { id: 10, title: 'Launch', description: 'Review and go live' },
+  { id: 11, title: 'LegitScript Certification', description: 'Optional health product certification' }
 ];
 
 // Filter out Application Status step and LegitScript (if not wanted) from sidebar display
 const getVisibleSteps = (wantsLegitScript: boolean) => {
   return allSteps.filter(step => {
-    if (step.id === 10) return false; // Always hide Application Status from sidebar
-    if (step.id === 9 && !wantsLegitScript) return false; // Hide LegitScript if not wanted
+    if (step.id === 9) return false; // Always hide Application Status from sidebar
+    if (step.id === 11 && !wantsLegitScript) return false; // Hide LegitScript if not wanted
     return true;
   });
 };
@@ -164,36 +164,31 @@ export const OnboardingWizard = () => {
   };
 
   const nextStep = () => {
-    if (currentStep === 10 && onboardingData.applicationStatus.status === 'approved') {
-      // After approval, go to Launch step
-      setCurrentStep(11);
-    } else if (currentStep === 8) {
-      // After bank verification, skip to LegitScript if wanted, otherwise to Application Status
-      if (onboardingData.bankVerification.wantsLegitScript) {
-        setCurrentStep(9);
-      } else {
-        setCurrentStep(10);
-      }
-    } else if (currentStep === 9 && !onboardingData.bankVerification.wantsLegitScript) {
-      // Skip from LegitScript to Application Status if somehow reached
+    if (currentStep === 9 && onboardingData.applicationStatus.status === 'approved') {
+      // After application approval, go to Launch step
       setCurrentStep(10);
+    } else if (currentStep === 8) {
+      // After bank verification, go to Application Status
+      setCurrentStep(9);
+    } else if (currentStep === 10) {
+      // After Launch, go to LegitScript if wanted, otherwise complete
+      if (onboardingData.bankVerification.wantsLegitScript) {
+        setCurrentStep(11);
+      }
     } else if (currentStep < allSteps.length) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const prevStep = () => {
-    if (currentStep === 10 && onboardingData.bankVerification.wantsLegitScript) {
-      // Go back to LegitScript from Application Status
-      setCurrentStep(9);
-    } else if (currentStep === 10 && !onboardingData.bankVerification.wantsLegitScript) {
-      // Go back to Bank Verification from Application Status if no LegitScript
+    if (currentStep === 9) {
+      // Go back to Bank Verification from Application Status
       setCurrentStep(8);
-    } else if (currentStep === 11 && onboardingData.bankVerification.wantsLegitScript) {
-      // Go back to LegitScript from Launch if LegitScript was completed
+    } else if (currentStep === 10) {
+      // Go back to Application Status from Launch
       setCurrentStep(9);
-    } else if (currentStep === 11 && !onboardingData.bankVerification.wantsLegitScript) {
-      // Go back to Application Status from Launch if no LegitScript
+    } else if (currentStep === 11) {
+      // Go back to Launch from LegitScript
       setCurrentStep(10);
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
@@ -208,7 +203,7 @@ export const OnboardingWizard = () => {
       message: ''
     };
     updateOnboardingData({ applicationStatus: submissionData });
-    setCurrentStep(10); // Go to Application Status step
+    setCurrentStep(9); // Go to Application Status step
   };
 
   const resubmitApplication = () => {
@@ -304,15 +299,6 @@ export const OnboardingWizard = () => {
         );
       case 9:
         return (
-          <LegitScriptStep
-            data={onboardingData.legitScript}
-            onUpdate={(data) => updateOnboardingData({ legitScript: data })}
-            onNext={nextStep}
-            onPrev={prevStep}
-          />
-        );
-      case 10:
-        return (
           <ApplicationStatusStep
             data={onboardingData.applicationStatus}
             onUpdate={(data) => updateOnboardingData({ applicationStatus: data })}
@@ -320,10 +306,19 @@ export const OnboardingWizard = () => {
             onResubmit={resubmitApplication}
           />
         );
-      case 11:
+      case 10:
         return (
           <LaunchStep
             onboardingData={onboardingData}
+            onPrev={prevStep}
+          />
+        );
+      case 11:
+        return (
+          <LegitScriptStep
+            data={onboardingData.legitScript}
+            onUpdate={(data) => updateOnboardingData({ legitScript: data })}
+            onNext={nextStep}
             onPrev={prevStep}
           />
         );
@@ -402,7 +397,7 @@ export const OnboardingWizard = () => {
             />
           </div>
           <div className="text-xs text-slate-500 mt-1">
-            {currentStep === 10 ? 'Application Status' : `Step ${Math.min(currentStep, 8)} of ${getVisibleSteps(onboardingData.bankVerification.wantsLegitScript).length}`}
+            {currentStep === 9 ? 'Application Status' : `Step ${Math.min(currentStep, 8)} of ${getVisibleSteps(onboardingData.bankVerification.wantsLegitScript).length}`}
           </div>
         </div>
       </div>
@@ -412,7 +407,7 @@ export const OnboardingWizard = () => {
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-lg font-semibold text-slate-800">Platform Setup</h1>
           <span className="text-sm text-slate-600">
-            {currentStep === 10 ? 'Application Status' : `${Math.min(currentStep, 8)}/${getVisibleSteps(onboardingData.bankVerification.wantsLegitScript).length}`}
+            {currentStep === 9 ? 'Application Status' : `${Math.min(currentStep, 8)}/${getVisibleSteps(onboardingData.bankVerification.wantsLegitScript).length}`}
           </span>
         </div>
         <div className="w-full bg-slate-200 rounded-full h-2">

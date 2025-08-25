@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Clock, XCircle, AlertTriangle } from 'lucide-react';
+import { CheckCircle, Clock, XCircle, AlertTriangle, RefreshCw } from 'lucide-react';
 import { ApplicationStatus } from '../types';
+import { useToast } from '@/hooks/use-toast';
 
 interface ApplicationStatusStepProps {
   data: ApplicationStatus;
@@ -13,9 +14,42 @@ interface ApplicationStatusStepProps {
 
 export const ApplicationStatusStep: React.FC<ApplicationStatusStepProps> = ({
   data,
+  onUpdate,
   onNext,
   onResubmit
 }) => {
+  const { toast } = useToast();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const refreshStatus = async () => {
+    setIsRefreshing(true);
+    
+    // Simulate API call to check status
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // For demo purposes, randomly update status to approved after refresh
+    // In real app, this would come from your backend
+    if (data.status === 'submitted' || data.status === 'pending') {
+      const updatedStatus: ApplicationStatus = {
+        ...data,
+        status: 'approved',
+        reviewedAt: new Date().toISOString(),
+        message: 'Your application has been approved! You can now continue to launch your platform.'
+      };
+      onUpdate(updatedStatus);
+      toast({
+        title: "Status Updated",
+        description: "Your application has been approved!",
+      });
+    } else {
+      toast({
+        title: "Status Checked",
+        description: "No updates to your application status at this time.",
+      });
+    }
+    
+    setIsRefreshing(false);
+  };
   const getStatusIcon = () => {
     switch (data.status) {
       case 'submitted':
@@ -150,9 +184,20 @@ export const ApplicationStatusStep: React.FC<ApplicationStatusStepProps> = ({
                 <Button 
                   variant="outline"
                   className="text-slate-600"
-                  onClick={() => window.location.reload()}
+                  onClick={refreshStatus}
+                  disabled={isRefreshing}
                 >
-                  Refresh Status
+                  {isRefreshing ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Checking...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Refresh Status
+                    </>
+                  )}
                 </Button>
               </div>
             )}
