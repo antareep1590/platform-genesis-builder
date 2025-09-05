@@ -119,6 +119,22 @@ export interface BankVerification {
   acceptACH: boolean;
   businessFundingInterest: boolean;
 
+  // Merchant Profile Info
+  typesOfGoodsSold: string;
+  refundPolicy: string;
+  deliveryMethod: string;
+  fulfillmentProvider: string;
+  whatDoYouSell: string;
+  annualDiscVolume: number;
+  visaMcAnnualVol: number;
+  monthlyDiscVolume: number;
+  visaMcMonthlyVol: number;
+  annualAmexSales: number;
+  averageTicket: number;
+  highTicket: number;
+  swipePercentage: number;
+  phoneKeyedPercentage: number;
+
   // Document Uploads
   driverLicense: File | null;
   bankStatements: File[];

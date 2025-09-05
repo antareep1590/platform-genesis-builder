@@ -818,6 +818,209 @@ export const BankVerificationStep: React.FC<BankVerificationStepProps> = ({
         </div>
       </div>
 
+      {/* Merchant Profile Section */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+            <CreditCard className="w-4 h-4 text-white" />
+          </div>
+          <h2 className="text-xl font-semibold text-slate-900">Merchant Profile</h2>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="typesOfGoodsSold" className="text-sm font-medium text-slate-700">Types of goods sold</Label>
+              <Select value={data.typesOfGoodsSold} onValueChange={(value) => handleInputChange('typesOfGoodsSold', value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select type of goods" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="physical-goods">Physical Goods</SelectItem>
+                  <SelectItem value="digital-goods">Digital Goods</SelectItem>
+                  <SelectItem value="services">Services</SelectItem>
+                  <SelectItem value="subscription">Subscription Services</SelectItem>
+                  <SelectItem value="mixed">Mixed Products/Services</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="refundPolicy" className="text-sm font-medium text-slate-700">What is refund policy</Label>
+              <Select value={data.refundPolicy} onValueChange={(value) => handleInputChange('refundPolicy', value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select refund policy" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="no-refund">No Refund</SelectItem>
+                  <SelectItem value="7-days">7 Days</SelectItem>
+                  <SelectItem value="14-days">14 Days</SelectItem>
+                  <SelectItem value="30-days">30 Days</SelectItem>
+                  <SelectItem value="60-days">60 Days</SelectItem>
+                  <SelectItem value="90-days">90 Days</SelectItem>
+                  <SelectItem value="custom">Custom Policy</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="deliveryMethod" className="text-sm font-medium text-slate-700">Delivery method of goods/services</Label>
+              <Select value={data.deliveryMethod} onValueChange={(value) => handleInputChange('deliveryMethod', value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select delivery method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="digital-delivery">Digital Delivery</SelectItem>
+                  <SelectItem value="mail-shipping">Mail/Shipping</SelectItem>
+                  <SelectItem value="pickup">Pickup</SelectItem>
+                  <SelectItem value="in-person">In Person</SelectItem>
+                  <SelectItem value="mixed">Mixed Methods</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="fulfillmentProvider" className="text-sm font-medium text-slate-700">Who performs product fulfillment</Label>
+              <Select value={data.fulfillmentProvider} onValueChange={(value) => handleInputChange('fulfillmentProvider', value)}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select fulfillment provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="business">Business</SelectItem>
+                  <SelectItem value="dropship">Dropship</SelectItem>
+                  <SelectItem value="third-party">Third Party</SelectItem>
+                  <SelectItem value="mixed">Mixed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="whatDoYouSell" className="text-sm font-medium text-slate-700">What do you sell?</Label>
+            <Input
+              id="whatDoYouSell"
+              value={data.whatDoYouSell}
+              onChange={(e) => handleInputChange('whatDoYouSell', e.target.value)}
+              placeholder="Describe what you sell"
+              className="mt-1"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="annualDiscVolume" className="text-sm font-medium text-slate-700">$ Annual Disc. Volume</Label>
+              <Input
+                id="annualDiscVolume"
+                type="number"
+                min="0"
+                value={data.annualDiscVolume || ''}
+                onChange={(e) => handleNumericChange('annualDiscVolume', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="visaMcAnnualVol" className="text-sm font-medium text-slate-700">$ Visa/MC Annual Vol</Label>
+              <Input
+                id="visaMcAnnualVol"
+                type="number"
+                min="0"
+                value={data.visaMcAnnualVol || ''}
+                onChange={(e) => handleNumericChange('visaMcAnnualVol', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="monthlyDiscVolume" className="text-sm font-medium text-slate-700">$ Monthly Disc. Volume</Label>
+              <Input
+                id="monthlyDiscVolume"
+                type="number"
+                min="0"
+                value={data.monthlyDiscVolume || ''}
+                onChange={(e) => handleNumericChange('monthlyDiscVolume', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="visaMcMonthlyVol" className="text-sm font-medium text-slate-700">$ Visa/MC Monthly Vol</Label>
+              <Input
+                id="visaMcMonthlyVol"
+                type="number"
+                min="0"
+                value={data.visaMcMonthlyVol || ''}
+                onChange={(e) => handleNumericChange('visaMcMonthlyVol', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="annualAmexSales" className="text-sm font-medium text-slate-700">Annual Amex sales</Label>
+              <Input
+                id="annualAmexSales"
+                type="number"
+                min="0"
+                value={data.annualAmexSales || ''}
+                onChange={(e) => handleNumericChange('annualAmexSales', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="averageTicket" className="text-sm font-medium text-slate-700">Average ticket</Label>
+              <Input
+                id="averageTicket"
+                type="number"
+                min="0"
+                value={data.averageTicket || ''}
+                onChange={(e) => handleNumericChange('averageTicket', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="highTicket" className="text-sm font-medium text-slate-700">High Ticket</Label>
+              <Input
+                id="highTicket"
+                type="number"
+                min="0"
+                value={data.highTicket || ''}
+                onChange={(e) => handleNumericChange('highTicket', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="swipePercentage" className="text-sm font-medium text-slate-700">Swipe %</Label>
+              <Input
+                id="swipePercentage"
+                type="number"
+                min="0"
+                max="100"
+                value={data.swipePercentage || ''}
+                onChange={(e) => handleNumericChange('swipePercentage', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="phoneKeyedPercentage" className="text-sm font-medium text-slate-700">Phone keyed %</Label>
+              <Input
+                id="phoneKeyedPercentage"
+                type="number"
+                min="0"
+                max="100"
+                value={data.phoneKeyedPercentage || ''}
+                onChange={(e) => handleNumericChange('phoneKeyedPercentage', e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Document Upload Section */}
       <div className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
