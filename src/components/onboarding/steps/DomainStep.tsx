@@ -257,7 +257,7 @@ export const DomainStep: React.FC<DomainStepProps> = ({
                   <div className="flex items-center space-x-3">
                     <CheckCircle2 size={24} className="text-green-600" />
                     <div>
-                      <h3 className="font-semibold text-green-900">Your subdomain has been set</h3>
+                      <h3 className="font-semibold text-green-900">Congratulations! Your domain has been set up.</h3>
                       <p className="text-sm text-green-700">{getDomainUrl()}</p>
                     </div>
                   </div>
@@ -274,23 +274,22 @@ export const DomainStep: React.FC<DomainStepProps> = ({
                   </div>
                 </div>
                 
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="justify-between"
-                    onClick={() => window.open(getCustomerPortalUrl(), '_blank')}
-                  >
-                    Customer Portal <ExternalLink size={14} />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="justify-between"
-                    onClick={() => window.open(getMerchantPortalUrl(), '_blank')}
-                  >
-                    Merchant Portal <ExternalLink size={14} />
-                  </Button>
+                <div className="mt-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-white rounded border">
+                      <div className="text-xs text-slate-500 mb-1">Customer facing website</div>
+                      <div className="text-sm font-mono text-slate-400">{getCustomerPortalUrl()}</div>
+                    </div>
+                    <div className="p-3 bg-white rounded border">
+                      <div className="text-xs text-slate-500 mb-1">Admin Portal</div>
+                      <div className="text-sm font-mono text-slate-400">{getMerchantPortalUrl()}</div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-700">
+                      Your URLs will become active once you complete all the remaining steps and launch your platform successfully.
+                    </p>
+                  </div>
                 </div>
               </Card>
             )}
@@ -316,23 +315,22 @@ export const DomainStep: React.FC<DomainStepProps> = ({
                   </p>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="justify-between text-gray-500"
-                    disabled
-                  >
-                    Customer Portal {getStatusBadge('pending')}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="justify-between"
-                    onClick={() => window.open(getMerchantPortalUrl(), '_blank')}
-                  >
-                    Merchant Portal <ExternalLink size={14} />
-                  </Button>
+                <div className="mt-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-white rounded border">
+                      <div className="text-xs text-slate-500 mb-1">Customer facing website</div>
+                      <div className="text-sm font-mono text-slate-400">{getCustomerPortalUrl()}</div>
+                    </div>
+                    <div className="p-3 bg-white rounded border">
+                      <div className="text-xs text-slate-500 mb-1">Admin Portal</div>
+                      <div className="text-sm font-mono text-slate-400">{getMerchantPortalUrl()}</div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-700">
+                      Your URLs will become active once you complete all the remaining steps and launch your platform successfully.
+                    </p>
+                  </div>
                 </div>
               </Card>
             )}
@@ -367,23 +365,22 @@ export const DomainStep: React.FC<DomainStepProps> = ({
                   </p>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="justify-between"
-                    onClick={() => window.open(getCustomerPortalUrl(), '_blank')}
-                  >
-                    Customer Portal <ExternalLink size={14} />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="justify-between"
-                    onClick={() => window.open(getMerchantPortalUrl(), '_blank')}
-                  >
-                    Merchant Portal <ExternalLink size={14} />
-                  </Button>
+                <div className="mt-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 bg-white rounded border">
+                      <div className="text-xs text-slate-500 mb-1">Customer facing website</div>
+                      <div className="text-sm font-mono text-slate-400">{getCustomerPortalUrl()}</div>
+                    </div>
+                    <div className="p-3 bg-white rounded border">
+                      <div className="text-xs text-slate-500 mb-1">Admin Portal</div>
+                      <div className="text-sm font-mono text-slate-400">{getMerchantPortalUrl()}</div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-700">
+                      Your URLs will become active once you complete all the remaining steps and launch your platform successfully.
+                    </p>
+                  </div>
                 </div>
               </Card>
             )}
