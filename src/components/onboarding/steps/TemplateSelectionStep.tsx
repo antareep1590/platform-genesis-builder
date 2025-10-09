@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, Eye, Check } from 'lucide-react';
+import { ChevronLeft, Eye, Check, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Template } from '../types';
 
@@ -107,8 +107,38 @@ export const TemplateSelectionStep: React.FC<TemplateSelectionStepProps> = ({
 }) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
 
   const availableTemplates = templates[businessType as keyof typeof templates] || templates.default;
+
+  const loadingMessages = [
+    'Initializing your custom storefront…',
+    'Your digital storefront is coming to life…',
+    'Customization Completed'
+  ];
+
+  useEffect(() => {
+    if (!isLoading) return;
+
+    let currentIndex = 0;
+    setLoadingMessage(loadingMessages[0]);
+
+    const interval = setInterval(() => {
+      currentIndex++;
+      if (currentIndex < loadingMessages.length) {
+        setLoadingMessage(loadingMessages[currentIndex]);
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          setIsLoading(false);
+          onNext();
+        }, 800);
+      }
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   const handleTemplateSelect = (template: any) => {
     onUpdate({
@@ -123,7 +153,17 @@ export const TemplateSelectionStep: React.FC<TemplateSelectionStepProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {isLoading && (
+        <div className="fixed inset-0 bg-background/95 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto text-primary" />
+            <p className="text-xl font-medium text-foreground animate-fade-in">
+              {loadingMessage}
+            </p>
+          </div>
+        </div>
+      )}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-slate-800 mb-4">Choose Your Template</h2>
         <p className="text-lg text-slate-600 max-w-2xl mx-auto">
@@ -198,7 +238,7 @@ export const TemplateSelectionStep: React.FC<TemplateSelectionStepProps> = ({
         </Button>
         
         <Button
-          onClick={onNext}
+          onClick={() => setIsLoading(true)}
           disabled={!data.selectedTemplate}
           className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-medium"
         >
