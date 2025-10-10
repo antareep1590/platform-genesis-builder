@@ -10,15 +10,31 @@ import { OnboardingData } from '../types';
 interface LaunchStepProps {
   onboardingData: OnboardingData;
   onPrev: () => void;
+  isApproved?: boolean;
 }
 
 export const LaunchStep: React.FC<LaunchStepProps> = ({
   onboardingData,
-  onPrev
+  onPrev,
+  isApproved = false
 }) => {
-  const { businessInfo, branding, domain, template } = onboardingData;
+  const { businessInfo, branding, domain, template, applicationStatus } = onboardingData;
   const [isLaunched, setIsLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+  }, []);
+
+  React.useEffect(() => {
+    if (isApproved && applicationStatus?.status === 'approved') {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 5000);
+    }
+  }, [isApproved, applicationStatus?.status]);
   
   const platformUrl = domain.domainOption === 'custom' 
     ? domain.customDomain 
@@ -105,7 +121,61 @@ export const LaunchStep: React.FC<LaunchStepProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {showConfetti && !prefersReducedMotion && (
+        <div className="fixed inset-0 pointer-events-none z-50">
+          <div className="absolute inset-0 animate-fade-in">
+            {[...Array(50)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute w-2 h-2 bg-green-500 rounded-full animate-fade-out"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 2}s`,
+                  opacity: Math.random() * 0.7 + 0.3,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isApproved && applicationStatus?.status === 'approved' && (
+        <Card className="p-6 shadow-lg border-2 border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 mb-6">
+          <div className="text-center">
+            <div className="p-4 bg-green-500 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center animate-scale-in">
+              <Check className="h-10 w-10 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-green-900 mb-2">
+              🎉 Application Approved!
+            </h3>
+            <p className="text-lg text-green-800 mb-4">
+              Congratulations! Your application has been approved and deployment is in progress.
+            </p>
+            <div className="flex items-center justify-center space-x-2 text-green-700">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span className="text-sm font-medium">Setting up your platform...</span>
+            </div>
+            <p className="text-sm text-green-600 mt-3">
+              You'll be notified via email at <strong>{businessInfo.supportEmail}</strong> when deployment is complete.
+            </p>
+            {applicationStatus?.reviewedAt && (
+              <div className="mt-4 pt-4 border-t border-green-200">
+                <div className="flex items-center justify-center space-x-4 text-sm text-green-700">
+                  <div>
+                    <span className="font-medium">Submitted:</span> {new Date(applicationStatus.submittedAt).toLocaleString()}
+                  </div>
+                  <div>
+                    <span className="font-medium">Approved:</span> {new Date(applicationStatus.reviewedAt).toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
+
       <div className="text-center mb-8">
         <div className="p-4 bg-green-100 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
           <Rocket className="h-10 w-10 text-green-600" />

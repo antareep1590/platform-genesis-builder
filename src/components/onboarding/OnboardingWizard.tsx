@@ -325,6 +325,7 @@ export const OnboardingWizard = () => {
           <LaunchStep
             onboardingData={onboardingData}
             onPrev={prevStep}
+            isApproved={onboardingData.applicationStatus.status === 'approved'}
           />
         );
       case 11:
